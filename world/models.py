@@ -59,8 +59,8 @@ class Countrylanguage(models.Model):
         db_table = 'countrylanguage'
         unique_together = (('countrycode', 'language'),)
 
-    def __unicode__(self):
-	return ("country-code: %s language: %s") %(self.countrycode.name, self.language)
+    def __str__(self):
+        return ("country-code: %s language: %s") %(self.countrycode.name, self.language)
 
 class DjangoMigrations(models.Model):
     app = models.CharField(max_length=255)

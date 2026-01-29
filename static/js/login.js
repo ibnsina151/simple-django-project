@@ -1,40 +1,59 @@
 var $DOM = $(document);
 
-$DOM.on('click', '#send_otp', function() {
-
-	console.log("send otp clicked");
-    data = {}
-    data["email"] = $(".email").val();
-
-	$.ajax({
-		type: 'post',
-        data: JSON.stringify(data),
-		url: '/login/send_otp',
-		success: function(result) {
-            console.log(result);
-		}
-	});
-});
-
 $DOM.on('click', '#login_submit', function() {
 
 	console.log("login clicked");
-    data = {}
-    data["email"] = $(".email").val();
-    data["otp"] = $(".otp").val()
+    var email = $(".email").val();
+    var password = $(".password").val();
 
-	$.ajax({
-		type: 'post',
-        data: JSON.stringify(data),
-		url: '/login/validate',
-		success: function(result) {
-            if (result.success) {
-                window.location.href = "/";
-            }
-            else {
-                alertify.set('notifier', 'position', 'top-right');
-                alertify.error(result.message);
-            }
-		}
-	});
+    if (!email) {
+        alertify.set('notifier', 'position', 'top-right');
+        alertify.error("Email or username is required");
+        return;
+    }
+
+    if (!password || password.length < 6 || password.length > 12) {
+        alertify.set('notifier', 'position', 'top-right');
+        alertify.error("Password must be between 6 and 12 characters");
+        return;
+    }
+
+    // Mock implementation: no server call
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.success('Login in progress...');
+    setTimeout(function() {
+        window.location.href = "/";
+    }, 2000);
+});
+
+$DOM.on('click', '#google_login', function() {
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.success('Logging in with Google...');
+    setTimeout(function() {
+        window.location.href = "/";
+    }, 2000);
+});
+
+$DOM.on('click', '#facebook_login', function() {
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.success('Logging in with Facebook...');
+    setTimeout(function() {
+        window.location.href = "/";
+    }, 2000);
+});
+
+$DOM.on('click', '#twitter_login', function() {
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.success('Logging in with Twitter...');
+    setTimeout(function() {
+        window.location.href = "/";
+    }, 2000);
+});
+
+$DOM.on('click', '#apple_login', function() {
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.success('Logging in with Apple...');
+    setTimeout(function() {
+        alertify.error('Harmful ID detected, Apple ID not acceptable for login on this page');
+    }, 2000);
 });
