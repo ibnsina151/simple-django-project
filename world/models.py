@@ -110,8 +110,28 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ["first_name"]
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Product(models.Model):
+    external_id = models.CharField(max_length=100, blank=True)  # ID from the ecommerce site
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    description = models.TextField(blank=True)
+    image_url = models.URLField(blank=True)
+    source_url = models.URLField()  # URL from the ecommerce site
+
+    def __str__(self):
+        return self.name
+
 # Register models for search
 register(City)
 register(Country)
 register(Countrylanguage)
+register(Category)
+register(Product)
 

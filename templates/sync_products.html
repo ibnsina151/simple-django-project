@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Live Category Product Sync{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function() {
+            $('#sync-form').on('submit', function() {
+                $('#sync-btn').prop('disabled', true);
+                $('#sync-btn .spinner-border').removeClass('d-none');
+                $('#sync-btn').append(' Syncing...');
+                $('#sync-status').text('Fetching data...');
+            });
+            $('#contact-form').on('submit', function() {
+                $('#contact-btn').prop('disabled', true);
+                $('#contact-btn .spinner-border').removeClass('d-none');
+                $('#contact-btn').append(' Searching...');
+                $('#contact-status').text('Searching contacts...');
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <h4 class="text-center">Live Category Product Sync</h4>
+    <form method="post" id="sync-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="ecommerce_url">Ecommerce Site URL:</label>
+            <input type="url" class="form-control" id="ecommerce_url" name="ecommerce_url" value="{{ ecommerce_url|default:'https://ultimateorganiclife.com/product-categories/2/Coffee%20&%20Tea' }}" required>
+        </div>
+        <button type="submit" name="sync_products" class="btn btn-primary" id="sync-btn">
+            <span class="spinner-border spinner-border-sm d-none" role="status" id="sync-spinner"></span>
+            Sync Products
+        </button>
+        <span id="sync-status" class="ml-3">
+            {% if synced_count is not none %}
+                <span class="badge badge-info">Synced: {{ synced_count }} products</span>
+            {% endif %}
+            {% if message %}
+                <span class="badge badge-success">{{ message }}</span>
+            {% endif %}
+            {% if error %}
+                <span class="badge badge-danger">{{ error }}</span>
+            {% endif %}
+        </span>
+    </form>
+
+    <hr>
+
+    <h5 class="text-center">Search Contact Details</h5>
+    <form method="post" id="contact-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="website_url">Website URL:</label>
+            <input type="url" class="form-control" id="website_url" name="website_url" placeholder="https://example.com" required>
+        </div>
+        <button type="submit" name="search_contact" class="btn btn-secondary" id="contact-btn">
+            <span class="spinner-border spinner-border-sm d-none" role="status" id="contact-spinner"></span>
+            Search Contact
+        </button>
+        <span id="contact-status" class="ml-3">
+            {% if contact_count is not none %}
+                <span class="badge badge-info">Found: {{ contact_count }} contacts</span>
+            {% endif %}
+            {% if contact_message %}
+                <span class="badge badge-info">{{ contact_message }}</span>
+            {% endif %}
+            {% if contact_error %}
+                <span class="badge badge-danger">{{ contact_error }}</span>
+            {% endif %}
+        </span>
+    </form>
+
+    {% if contacts %}
+    <div class="mt-3">
+        <h6>Contact Details Found:</h6>
+        <ul class="list-group">
+            {% for contact in contacts %}
+            <li class="list-group-item">{{ contact }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

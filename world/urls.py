@@ -12,4 +12,5 @@ urlpatterns = [
     path('search/', views.search, name="search"),
     path('country/<str:country_name>/', views.get_country_details, name="country_page"),
     path('logout/', views.c_logout, name="logout"),
+    path('sync-products/', views.sync_products, name="sync_products"),
 ]
