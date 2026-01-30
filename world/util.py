@@ -9,7 +9,7 @@ def otp_generator(size=6, chars=string.ascii_uppercase + string.digits):
 def send_otp_email(email, otp):
     try:
         message = "Your otp is %s" %(otp)
-        email = EmailMessage('OTP for panorbit login', message, to=[email])
+        email = EmailMessage('OTP for Grok Django Upgrade Demo login', message, to=[email])
         email.send()
     except Exception:
         return False

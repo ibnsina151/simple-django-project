@@ -1,4 +1,4 @@
-# simple-django-project
+# Grok Django Upgrade Demo
 ## Installation
 
 ### Prerequisites
@@ -42,14 +42,14 @@ pip install -r requirements.txt
 mysql -u <mysql-user> -p
 
 # Give the absolute path of the file
-mysql> source ~/simple-django-project/world.sql
+mysql> source ~/grok-django-upgrade-demo/world.sql
 mysql> exit;
 
 ```
 #### 7. Edit project settings
 ```bash
 # open settings file
-vim panorbit/settings.py
+vim grok_django_upgrade_demo/settings.py
 
 # Edit Database configurations with your MySQL configurations.
 # Search for DATABASES section.
@@ -80,25 +80,20 @@ EMAIL_PORT = 587
 python manage.py makemigrations
 python manage.py migrate
 
-# For search feature we need to index certain tables to the haystack. For that run below command.
-python manage.py rebuild_index
+# The search feature is now handled by django-watson and does not require manual indexing.
 
 # Run the server
-python manage.py runserver 0:8001
+python manage.py runserver 0:8000
 
-# your server is up on port 8001
+# your server is up on port 8000
 ```
-Try opening [http://localhost:8001](http://localhost:8001) in the browser.
+Try opening [http://localhost:8000](http://localhost:8000) in the browser.
 Now you are good to go.
 
 ### 9. URLs
-#### Signup: [http://localhost:8001/signup](http://localhost:8001/signup)
-![](https://i.imgur.com/T1KkfXi.png)
-#### Login: [http://localhost:8001/login](http://localhost:8001/login)
-![](https://i.imgur.com/KvyiuU6.png)
-#### home for search: [http://localhost:8001/](http://localhost:8001/)
-![](https://i.imgur.com/234qAiS.png)
-#### country page: [http://localhost:8001/country/kenya](http://localhost:8001/country/kenya)
-![](https://i.imgur.com/3zh3YKd.png)
-#### Logout: [http://localhost:8001/logout](http://localhost:8001/logout)
+#### Signup: [http://localhost:8000/signup](http://localhost:8000/signup)
+#### Login: [http://localhost:8000/login](http://localhost:8000/login)
+#### home for search: [http://localhost:8000/](http://localhost:8000/)
+#### country page: [http://localhost:8000/country/kenya](http://localhost:8000/country/kenya)
+#### Logout: [http://localhost:8000/logout](http://localhost:8000/logout)
 

@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from django.db import IntegrityError
 
-from haystack.query import SearchQuerySet
+from watson.search import search
 
 from .util import otp_generator, send_otp_email, validate_otp
 from .models import User, City, Country, Countrylanguage
@@ -23,17 +23,17 @@ def home(request):
 def search(request):
     query = request.GET.get("query", "").strip()
     result = {"cities": [], "countries": [], "languages": []}
-    
-    if not query and len(query) < 3:
+
+    if not query or len(query) < 3:
         return JsonResponse(result)
 
-    city_pks = list(SearchQuerySet().autocomplete(i_city_name=query).values_list("pk", flat=True))
-    country_pks = list(SearchQuerySet().autocomplete(i_country_name=query).values_list("pk", flat=True))
-    language_pks = list(SearchQuerySet().autocomplete(i_language_name=query).values_list("pk", flat=True))
+    city_results = search(query, models=[City])
+    country_results = search(query, models=[Country])
+    language_results = search(query, models=[Countrylanguage])
 
-    result["cities"] = [ City.objects.filter(pk=city_pk).values().first() for city_pk in city_pks ]
-    result["countries"] = [ Country.objects.filter(pk=country_pk).values().first() for country_pk in country_pks ]
-    result["languages"] = [ Countrylanguage.objects.filter(pk=language_pk).values().first() for language_pk in language_pks ]
+    result["cities"] = [ City.objects.filter(pk=result.object.pk).values().first() for result in city_results ]
+    result["countries"] = [ Country.objects.filter(pk=result.object.pk).values().first() for result in country_results ]
+    result["languages"] = [ Countrylanguage.objects.filter(pk=result.object.pk).values().first() for result in language_results ]
 
     return render(request, "search_results.html", result)
 
@@ -106,7 +106,7 @@ def send_otp(request):
     # cache.set('{0}_auth_otp'.format(request.session.session_key), otp, 120)
     # cache.set('{0}_auth_email'.format(request.session.session_key), email, 120)
  
-    result = {"successs": True, "message": "otp sent"}
+    result = {"success": True, "message": "otp sent"}
     return JsonResponse(result)
 
 @csrf_exempt
