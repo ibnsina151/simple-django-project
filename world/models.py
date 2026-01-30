@@ -6,9 +6,8 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 
-from __future__ import unicode_literals
-
 from django.db import models
+from watson.search import register
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, BaseUserManager, UserManager
 
 from phonenumber_field.modelfields import PhoneNumberField
@@ -17,7 +16,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class City(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=35)  # Field name made lowercase.
-    countrycode = models.ForeignKey('Country', models.DO_NOTHING, db_column='CountryCode')  # Field name made lowercase.
+    countrycode = models.ForeignKey('Country', on_delete=models.DO_NOTHING, db_column='CountryCode')  # Field name made lowercase.
     district = models.CharField(db_column='District', max_length=20)  # Field name made lowercase.
     population = models.IntegerField(db_column='Population')  # Field name made lowercase.
 
@@ -49,7 +48,7 @@ class Country(models.Model):
 
 
 class Countrylanguage(models.Model):
-    countrycode = models.ForeignKey(Country, models.DO_NOTHING, db_column='CountryCode', primary_key=True)  # Field name made lowercase.
+    countrycode = models.OneToOneField(Country, on_delete=models.DO_NOTHING, db_column='CountryCode', primary_key=True)  # Field name made lowercase.
     language = models.CharField(db_column='Language', max_length=30)  # Field name made lowercase.
     isofficial = models.CharField(db_column='IsOfficial', max_length=1)  # Field name made lowercase.
     percentage = models.FloatField(db_column='Percentage')  # Field name made lowercase.
@@ -57,12 +56,12 @@ class Countrylanguage(models.Model):
     class Meta:
         managed = False
         db_table = 'countrylanguage'
-        unique_together = (('countrycode', 'language'),)
 
-    def __unicode__(self):
-	return ("country-code: %s language: %s") %(self.countrycode.name, self.language)
+    def __str__(self):
+        return ("country-code: %s language: %s") %(self.countrycode.name, self.language)
 
 class DjangoMigrations(models.Model):
+    id = models.AutoField(primary_key=True)
     app = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     applied = models.DateTimeField()
@@ -101,7 +100,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     username = models.CharField(max_length=100, blank=True, null=True)
     gender = models.CharField(max_length=100, default="female")
-    email = models.CharField(max_length=100, primary_key=True)
+    email = models.EmailField(max_length=100, primary_key=True)
     phone_number = PhoneNumberField(blank=True)
 
     objects = MyCustomUserManager()
@@ -109,4 +108,10 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
+
+
+# Register models for search
+register(City)
+register(Country)
+register(Countrylanguage)
 
